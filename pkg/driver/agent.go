@@ -38,7 +38,6 @@ import (
 	"google.golang.org/grpc/status"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog/v2"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/signals"
 )
 
 // node is the server implementation
@@ -51,9 +50,6 @@ type node struct {
 // of CSI NodeServer
 func NewNode(d *CSIDriver) csi.NodeServer {
 	var ControllerMutex = sync.RWMutex{}
-
-	// set up signals so we handle the first shutdown signal gracefully
-	stopCh := signals.SetupSignalHandler()
 
 	// start the zfsnode resource watcher
 	go func() {

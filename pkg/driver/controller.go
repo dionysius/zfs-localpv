@@ -22,7 +22,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/klog/v2"
-	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
 	zfsapi "github.com/openebs/zfs-localpv/pkg/apis/openebs.io/zfs/v1"
 	"github.com/openebs/zfs-localpv/pkg/builder/snapbuilder"
@@ -101,9 +100,6 @@ func (cs *controller) init() error {
 	kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, 0)
 	openebsInformerfactory := informers.NewSharedInformerFactoryWithOptions(openebsClient,
 		0, informers.WithNamespace(zfs.OpenEBSNamespace))
-
-	// set up signals so we handle the first shutdown signal gracefully
-	stopCh := signals.SetupSignalHandler()
 
 	cs.k8sNodeInformer = kubeInformerFactory.Core().V1().Nodes().Informer()
 	cs.zfsNodeInformer = openebsInformerfactory.Zfs().V1().ZFSNodes().Informer()

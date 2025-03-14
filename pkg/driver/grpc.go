@@ -21,10 +21,8 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -124,11 +122,6 @@ type nonBlockingGRPCServer struct {
 
 // Start grpc server for serving CSI endpoints
 func (s *nonBlockingGRPCServer) Start() {
-	// Also stop the grpc server if SIGINT or SIGTERM is received
-	// This is only a temporary solution, better pass a cancellable context around for the lifetime of the application
-	// See: https://stackoverflow.com/a/74895157 and https://gist.github.com/embano1/e0bf49d24f1cdd07cffad93097c04f0a
-	stopCh := make(chan os.Signal, 1)
-	signal.Notify(stopCh, syscall.SIGINT, syscall.SIGTERM)
 	s.wg.Add(1)
 	go func() {
 		<-stopCh    // wait for the stop signal
